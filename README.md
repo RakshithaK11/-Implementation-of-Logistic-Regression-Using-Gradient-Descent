@@ -9,68 +9,102 @@ To write a program to implement the the Logistic Regression Using Gradient Desce
 
 ## Algorithm
 ~~~
-1. Use the standard libraries in python for finding linear regression.
-2.Set variables for assigning dataset values.
-3.Import linear regression from sklearn.
-4.Predict the values of array.
-5.Calculate the accuracy, confusion and classification report by importing the required modules from sklearn.
-6.Obtain the graph.
+1. Import the necessary libraries: pandas, numpy, and matplotlib.pyplot.
+2. Read the dataset using pandas read_csv function.
+3. Preprocess the data: drop unnecessary columns, convert categorical variables to numerical using label encoding, and separate features (X) and target (Y) variables.
+4. Define the logistic regression model functions: sigmoid function, loss function, gradient descent function, and prediction function.
+5. Generate random data for training
+6. Train the logistic regression model using gradient descent with the generated or provided data.
+7.Evaluate the trained model: calculate the accuracy on the training data.
 ~~~
 ## Program:
 ~~~
 
+
 Program to implement the the Logistic Regression Using Gradient Descent.
 Developed by: RAKSHITHA K
-RegisterNumber:212223110039  
+RegisterNumber: 212223110039
+import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-import pandas as pd
+data=pd.read_csv('/content/Placement_Data (1).csv')
+data
+data=data.drop("sl_no",axis=1)
+data["gender"]=data["gender"].astype('category')
+data["ssc_b"]=data["ssc_b"].astype('category')
+data["hsc_b"]=data["hsc_b"].astype('category')
+data["degree_t"]=data["degree_t"].astype('category')
+data["workex"]=data["workex"].astype('category')
+data["specialisation"]=data["specialisation"].astype('category')
+data["status"]=data["status"].astype('category')
+data["hsc_s"]=data["hsc_s"].astype('category')
+data.dtypes
+data["gender"]=data["gender"].cat.codes
+data["ssc_b"]=data["ssc_b"].cat.codes
+data["hsc_b"]=data["hsc_b"].cat.codes
+data["degree_t"]=data["degree_t"].cat.codes
+data["workex"]=data["workex"].cat.codes
+data["specialisation"]=data["specialisation"].cat.codes
+data["status"]=data["status"].cat.codes
+data["hsc_S"]=data["hsc_s"].cat.codes
+data
+X=data.iloc[:, :-1].values
+Y=data.iloc[:, -1].values
+Y
+import numpy as np
+X = np.random.randn(100, 5)
+Y = np.random.randint(0, 2, size=(100,))  
+X = np.array(X)
+y = np.array(Y)
 
-datasets=pd.read_csv("Social_Network_Ads.csv")
-x=datasets.iloc[:,[2,3]].values
-y=datasets.iloc[:, 4].values
+theta = np.random.randn(X.shape[1])
 
-from sklearn.model_selection import train_test_split
-X_train,X_test,Y_train,Y_test = train_test_split(x,y,test_size = 0.25,random_state = 0)
+def sigmoid(z):
+    return 1 / (1 + np.exp(-z))
 
-from sklearn.preprocessing import StandardScaler
-sc_X=StandardScaler()
+def loss(theta, X, y):
+    h = sigmoid(X.dot(theta))
+    return -np.sum(y * np.log(h) + (1 - y) * np.log(1 - h))
 
-from sklearn.linear_model import LogisticRegression
-X_train=sc_X.fit_transform(X_train)
-X_test=sc_X.transform(X_test)
+def gradient_descent(theta, X, y, alpha, num_iterations):
+    m = len(y)
+    for i in range(num_iterations):
+        h = sigmoid(X.dot(theta))
+        gradient = X.T.dot(h - y) / m
+        theta -= alpha * gradient
+    return theta
 
-from sklearn.linear_model import LogisticRegression
-classifier=LogisticRegression(random_state=0)
-classifier.fit(X_train,Y_train)
-Y_pred=classifier.predict(X_test)
+theta = gradient_descent(theta, X, y, alpha=0.01, num_iterations=1000)
 
-from sklearn.metrics import confusion_matrix
-cm=confusion_matrix(Y_test,Y_pred)
+def predict(theta, X):
+    h = sigmoid(X.dot(theta))
+    y_pred = np.where(h >= 0.5, 1, 0)
+    return y_pred
 
-from sklearn import metrics
-accuracy=metrics.accuracy_score(Y_test,Y_pred)
-recall_sensitivity=metrics.recall_score(Y_test,Y_pred,pos_label=1)
-recall_sensiticity=metrics.recall_score(Y_test,Y_pred,pos_label=0)
-recall_sensitivity,recall_sensiticity
+y_pred = predict(theta, X)
+accuracy = np.mean(y_pred.flatten() == y)
+print("Accuracy:", accuracy)
+print(y_pred)
+print(Y)
+xnew = np.array([[0, 87, 0, 95, 0]]) 
 
-from matplotlib.colors import ListedColormap
-X_set,Y_set=X_train,Y_train
-X1,X2=np.meshgrid(np.arange(start=X_set[:,0].min()-1,stop=X_set[:,0].max()+1,step=0.01),np.arange(start=X_set[:,1].min()-1,stop=X_set[:,1].max()+1,step=0.01))
-plt.contourf(X1,X2,classifier.predict(np.array([X1.ravel(),X2.ravel()]).T).reshape(X1.shape),alpha=0.75,cmap=ListedColormap(("red","green")))
-plt.xlim(X1.min(),X2.max())
-plt.ylim(X2.min(),X2.max())
-for i,j in enumerate(np.unique(Y_set)):
-  plt.scatter(X_set[Y_set==j,0],X_set[Y_set==j,1],c=ListedColormap(("red","green"))(i),label=j)
-plt.title("Logistic Regression(Training set")
-plt.xlabel("AGE")
-plt.ylabel("ESTIMATED SALARY")
-plt.legend()
-plt.show()
+y_prednew = predict(theta, xnew)
+print(y_prednew)
+xnew = np.array([[0, 0, 0, 0, 0]])
+y_prednew = predict(theta, xnew)
+print(y_prednew)
+
 ~~~
 
 ## Output:
-![image](https://github.com/RakshithaK11/-Implementation-of-Logistic-Regression-Using-Gradient-Descent/assets/139336455/5d57d802-f68d-49c5-b283-feefbc3ec8af)
+![image](https://github.com/RakshithaK11/-Implementation-of-Logistic-Regression-Using-Gradient-Descent/assets/139336455/8fb21298-f019-45a9-bc0f-d448a42c7801)
+![image](https://github.com/RakshithaK11/-Implementation-of-Logistic-Regression-Using-Gradient-Descent/assets/139336455/d8687cf9-7b6c-4a26-9603-b2a76901489e)
+
+![image](https://github.com/RakshithaK11/-Implementation-of-Logistic-Regression-Using-Gradient-Descent/assets/139336455/b33bfb84-8e5d-426b-89f3-5562d629616e)
+
+![image](https://github.com/RakshithaK11/-Implementation-of-Logistic-Regression-Using-Gradient-Descent/assets/139336455/a0a61276-2721-4d33-996c-d7ad1176cb65)
+
+![image](https://github.com/RakshithaK11/-Implementation-of-Logistic-Regression-Using-Gradient-Descent/assets/139336455/b43847de-d5a8-4338-b3da-b5d4ffa65349)
 
 
 ## Result:
